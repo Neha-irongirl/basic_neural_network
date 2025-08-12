@@ -1,1 +1,308 @@
-# basic_neural_network
+# DA6401_assignment1
+#### `Amar Kumar`  `(MA24M002)`
+#### `M.Tech (Industrial Mathematics and Scientific Computing)` `IIT Madras`
+##### For more detail go to [wandb project report](https://wandb.ai/amar74384-iit-madras/DA6401_assign_1/reports/Amar-s-DA6401-Assignment-1--VmlldzoxMTgxMTExNA?accessToken=qdhkkop594goj5jni3xf0neu7gnu4ayelpn6w49mxjvvmzlglgfkszzzvlvdo6h6)
+
+## Problem Statement 
+In this assignment, you need to implement a feedforward neural network and write the backpropagation code for training the network. We strongly recommend using numpy for all matrix/vector operations. You are not allowed to use any automatic differentiation packages. This network will be trained and tested using the Fashion-MNIST dataset. Specifically, given an input image (28 x 28 = 784 pixels) from the Fashion-MNIST dataset, the network will be trained to classify the image into 1 of 10 classes.
+
+**Your code will have to follow the format specified in the Code Specifications section.**
+
+
+
+# Fashion-MNIST Neural Network from Scratch
+
+This assignment implements a **fully connected neural network** for **Fashion-MNIST classification** using only **NumPy, Pandas**. The code is modular, optimized using **WandB sweeps** and follows best software engineering practices.
+### Key Features
+- **Custom Neural Network Implementation:** Built from scratch with forward propagation, backpropagation, and optimizers.
+- **Hyperparameter Optimization:** Utilized **WandB sweeps** to identify the best model.
+- **Loss Function Comparison:** Evaluated **cross-entropy loss vs. squared error loss**.
+- **Confusion Matrix Visualization:** Automatically logs confusion matrics for **Best Run** to **WandB**.
+- **Proper Data Handling:** Ensured **randomized train-test splits** and ethical ML practices.
+
+### File Structure
+- `activation.py` - All the activation functions and their derivative.
+- `best_run.py` - Stores the best hyperparameter configuration.
+- `code1.ipynb` – Tests the best model and plots the confusion matrix.
+- `code2.ipynb` – Compares cross-entropy loss with squared error loss.
+- `code3.py` – Tests the best model and plots the confusion matrix.
+- `code4.py` – Compares cross-entropy loss with squared error loss.  
+- `code7.py` – Tests the best model and plots the confusion matrix.
+- `code8.py` – Compares cross-entropy loss with squared error loss.
+- `propagation.py` – Forward and backward propagation functions.
+- `functions.py` - Stores all the important functions used in the assignment.
+- `optimizers.py` – Implementations of various optimizers.
+- `sweep_config.py` – Configuration file for hyperparameter tuning.
+- `command_generator.py` - Generates command to run `train.py`.
+- `train.py` – Main script for training the best model.
+- `tens.py` - Stores mnist dataset in the local directory.
+- `fashion-mnist.npz` – The fashion-mnist dataset in the local directory, used for training and evaluation.
+- `mnist.npz` - the mnist dataset in the local directory.
+
+
+### Installation & Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/amar-at-iitm/da6401_assignment1
+   cd da6401_assignment1
+   ```
+2. Install required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Configure WandB:
+   ```bash
+   wandb login
+   ```
+### Question 1: Fashion-MNIST Dataset Visualization 
+`code1.ipynb` loads the Fashion-MNIST dataset using Keras, saves it as `.npz`, and visualizes one sample image per class in a 2x5 grid. It also logs the visualization to Weights & Biases (WandB).
+
+#### Dataset Overview
+Fashion-MNIST consists of 70,000 grayscale images (28x28 pixels) and **The dataset is divided into two parts 60,000 for training and 10,000 for testing**. The dataset consists of 10 clothing categories:
+- T-shirt/top, Trouser, Pullover, Dress, Coat
+- Sandal, Shirt, Sneaker, Bag, Ankle boot
+
+
+
+### Question 2: Feedforward Neural Network for Fashion-MNIST 
+`code2.ipynb` implements a flexible feedforward neural network that takes Fashion-MNIST images as input and outputs a probability distribution over 10 classes.
+
+- Supports user-defined or default layer sizes (`[784, 128, 64, 10]`).
+- Uses ReLU activation for hidden layers and Softmax for the output layer.
+- Accepts an image index (1-70,000) from the user and predicts class probabilities.
+
+### Steps in the notebook
+1. **Load and Preprocess Data**: Loads `fashion-mnist.npz`, flattens images, and normalizes pixel values.
+2. **Initialize Neural Network**: Creates weight matrices and bias vectors for a customizable layer structure.
+3. **Forward Propagation**: Applies ReLU activation for hidden layers and Softmax for the output.
+4. **User Interaction**: Allows selection of network architecture and an image index.
+5. **Prediction**: Computes class probabilities and displays them using pandas DataFrame.
+
+
+### Question 3: Fashion-MNIST Feedforward Neural Network with Backpropagation
+
+`code3.py` implements a customizable feedforward neural network (FFNN) with backpropagation to classify Fashion-MNIST images. The model supports multiple optimization algorithms and allows flexibility in layer configuration and batch sizes.
+
+- **Customizable architecture:** Easily modify the number of layers and neurons.
+- **Backpropagation:** Implemented with gradient computation.
+- **Optimizers:** Supports multiple optimization methods:
+  - Stochastic Gradient Descent (SGD)
+  - Momentum-based Gradient Descent
+  - Nesterov Accelerated Gradient Descent
+  - RMSprop
+  - Adam
+  - Nadam
+- **Batch Training:** Supports mini-batch updates.
+
+#### Command to Run
+```terminal
+python code3.py
+```
+
+#### Implementation Details
+##### Data Handling
+- Loads Fashion-MNIST dataset from a `.npz` file.
+- Normalizes pixel values to [0,1].
+- Converts labels to one-hot encoding.
+
+##### Neural Network
+- Uses ReLU activation for hidden layers and softmax for output.
+- Forward propagation computes activations layer-by-layer.
+- Backpropagation updates weights using gradients.
+- Supports Xavier initialization for weight stability.
+
+##### Training Process
+- Shuffles training data at each epoch.
+- Uses batch-wise forward and backward propagation.
+- Loss function: **Cross-entropy loss**.
+- Monitors validation accuracy at each epoch.
+
+##### Customization
+Modify layer sizes interactively or by editing the following line in `code3.py`:
+```python
+train_network(x_train, y_train, x_test, y_test, [784, 128, 64, 10], optimizer_name)
+```
+
+
+
+
+### Question 4,5,6: Hyperparameter Tuning with WandB Sweeps
+
+`code4.py` implements hyperparameter tuning using Weights & Biases (WandB) sweeps to optimize a neural network for Fashion-MNIST classification. The network is trained using different optimization algorithms, activation functions, and weight initializations, allowing for an efficient search of the best performing model.
+
+- Supports multiple optimizers: SGD, Momentum, Nesterov, RMSprop, Adam, Nadam
+- Configurable hyperparameters: number of hidden layers, layer sizes, learning rate, weight decay, batch size, and activation function
+- Uses WandB to log and visualize training performance
+- Performs a hyperparameter sweep with a defined search strategy
+- Splits 10% of training data as a validation set
+
+#### Hyperparameter Tuning Strategy
+The hyperparameters are tuned using the `wandb.sweep()` functionality. Given the large search space, we use **Bayesian Optimization** as our search strategy to efficiently explore promising configurations while minimizing redundant trials.
+
+#### Hyperparameters Considered:
+- **Epochs:** 5, 8, 10
+- **Hidden Layers:** 2, 3, 4, 5, 6
+- **Hidden Layer Size:** 16, 32, 64, 128
+- **Weight Decay (L2 Regularization):** 0, 0.0005, 0.5
+- **Learning Rate:** 0, 1e-5, 1e-4, 1e-6, 1e-3
+- **Optimizer:** SGD, Momentum, Nesterov, RMSprop, Adam, Nadam
+- **Batch Size:** 16, 32, 64
+- **Weight Initialization:** Random, Xavier
+- **Activation Functions:** Sigmoid, Tanh, ReLU
+
+#### Network Initialization
+- Fully connected neural network initialized with user-defined parameters.
+- Supports both Xavier and random initialization.
+
+#### Training Pipeline
+- Forward propagation computes activations for each layer.
+- Backpropagation computes gradients and updates weights using the chosen optimizer.
+- Training loss includes L2 regularization (if weight decay is applied).
+- Training and validation performance is logged using WandB.
+
+#### WandB Integration
+- Each run is uniquely named based on key hyperparameters (e.g., `run_hl-3_bs-16_act-tanh_opt-adam`).
+- Sweeps are created using `wandb.sweep()` with `count=100` to explore 100 configurations.
+- Training performance metrics (loss, accuracy) are logged and visualized.
+
+#### Running the Sweep
+```terminal
+python code3.py
+```
+It will automatically handle everything.
+
+#### Observations & Insights
+- The parallel coordinates plot helps identify parameter combinations that perform well.
+- The correlation summary shows the relationship between hyperparameters and model accuracy.
+- Models with ReLU activation and Xavier initialization generally perform better.
+- Larger batch sizes (32, 64) with Adam or RMSprop optimize convergence speed and stability.
+- A learning rate of `1e-3` works well with Adam, while `1e-4` is preferred for SGD-based optimizers.
+
+#### Recommended Configuration
+I am not able to achieve **95% accuracy**, but got **88.95% accuracy** with the following setup:
+
+- **activation:"sigmoid"**
+- **batch_size:32**
+- **epochs:10**
+- **hidden_layers:3**
+- **hidden_size:128**
+- **learning_rate:0.001**
+- **optimizer:"adam"**
+- **weight_decay:0**
+- **weight_init:"random"**
+
+
+
+### Question 7: Confusion Matrix for Best Run
+`code7.py` logs, the confusion matrix for the best-performing model identified from **100 run** on the Fashion-MNIST dataset, to wandb.
+
+#### Steps
+- Go to `Projects/DA6401_assign_1/Sweeps`
+- Find the **run with the highest `val_acc`** ( sort the run in descending order inside the column `val_acc`).
+- Go to the **overview** of that run
+- Copy the configuration parameter
+- Paste it inside the `best_run.py` and save it
+-run the script:
+```terminal
+python code7.py
+```
+
+#### Outputs
+It automatically logs the confusion matrix for the best run to the wandb.
+
+
+### Question 8: Comparing Cross-Entropy Loss with Squared Error Loss
+
+`code8.py` compares the effectiveness of cross-entropy loss and squared error loss in training a neural network on the Fashion-MNIST dataset. The experiment is conducted using different optimizer settings in a WandB sweep and logs the results to WandB.
+
+
+##### Run the script to start a WandB sweep:
+   ```terminal
+   python code8.py
+   ```
+
+#### Conclusion
+I did **50 runs** using wandb sweep. The graph logged on wandb clearly shows that both **training and validation loss are less in cross-entropy** compared to **squired error**
+
+
+### Question 9
+Github link 
+`https://github.com/amar-at-iitm/da6401_assignment1`
+
+
+
+
+### Question 10: MNIST Experimentation and Training with Various Hyperparameters
+From the final **100 runs** of `code4.py`, I picked the 3 runs with the highest validation accuracy. From the wandb run **overview** got the configuration parameters and then applied them to **MINIST** dataset using `train.py` and logged the result to **wandb**.
+
+
+### `train.py` Specification
+`train.py` is designed to train a fully connected neural network on the MNIST and Fashion-MNIST datasets using only NumPy. It includes features such as:
+- Customizable network architecture
+- Multiple optimizer choices
+- Configurable training hyperparameters
+- Weights & Biases (WandB) integration for experiment tracking
+
+#### ** Steps to run the train.py**
+- Pick any run
+- Copy its **config parameter** from the wandb run overview and paste them in `command_generator.py`.
+- run `python command_generator.py`: 
+
+Output: `python train.py --wandb_project DA6401_assign_1 --wandb_entity amar74384-iit-madras --dataset mnist --activation tanh --batch_size 32 --epochs 10 --hidden_layers 5 --hidden_size 128 --learning_rate 0.001 --optimizer nadam --weight_decay 0 --weight_init xavier`
+
+- Then paste the output in the terminal and hit enter
+
+#### Command-line Arguments
+The `train.py` script accepts several command-line arguments for training configuration. Example usage:
+```terminal
+python train.py --wandb_project DA6401_assign_1 --wandb_entity amar74384-iit-madras --dataset mnist --activation tanh --batch_size 32 --epochs 10 --hidden_layers 5 --hidden_size 128 --learning_rate 0.001 --optimizer nadam --weight_decay 0 --weight_init xavier
+```
+
+#### Supported Arguments  
+
+| Name | Default Value | Description |  
+|------|--------------|-------------|  
+| `-wp`, `--wandb_project` | `myprojectname` | Project name used to track experiments in Weights & Biases dashboard. |  
+| `-we`, `--wandb_entity` | `myname` | WandB Entity used to track experiments in the Weights & Biases dashboard. |  
+| `-d`, `--dataset` | `fashion_mnist` | Choices: `["mnist", "fashion_mnist"]` |  
+| `-e`, `--epochs` | `1` | Number of epochs to train the neural network. |  
+| `-b`, `--batch_size` | `4` | Batch size used to train the neural network. |  
+| `-l`, `--loss` | `cross_entropy` | Choices: `["mean_squared_error", "cross_entropy"]` |  
+| `-o`, `--optimizer` | `sgd` | Choices: `["sgd", "momentum", "nag", "rmsprop", "adam", "nadam"]` |  
+| `-lr`, `--learning_rate` | `0.1` | Learning rate used to optimize model parameters. |  
+| `-m`, `--momentum` | `0.5` | Momentum used by momentum and nag optimizers. |  
+| `-beta`, `--beta` | `0.5` | Beta used by RMSprop optimizer. |  
+| `-beta1`, `--beta1` | `0.5` | Beta1 used by Adam and Nadam optimizers. |  
+| `-beta2`, `--beta2` | `0.5` | Beta2 used by Adam and Nadam optimizers. |  
+| `-eps`, `--epsilon` | `0.000001` | Epsilon used by optimizers. |  
+| `-w_d`, `--weight_decay` | `0.0` | Weight decay used by optimizers. |  
+| `-w_i`, `--weight_init` | `random` | Choices: `["random", "Xavier"]` |  
+| `-nhl`, `--num_layers` | `1` | Number of hidden layers used in the feedforward neural network. |  
+| `-sz`, `--hidden_size` | `4` | Number of hidden neurons in a feedforward layer. |  
+| `-a`, `--activation` | `sigmoid` | Choices: `["identity", "sigmoid", "tanh", "ReLU"]` |  
+
+
+## Final Thoughts
+This assignment explored deep learning on the **Fashion-MNIST** dataset using a **fully connected neural network** implemented from scratch with **NumPy**. Several key aspects were covered, including:
+
+- **Model Training & Hyperparameter Optimization:**
+  - Used **WandB sweeps** to identify the best hyperparameters.
+  - Implemented multiple optimizers and weight initialization methods.
+
+- **Performance Evaluation:**
+  - Compared **cross-entropy loss** with **squared error loss** to analyze their effectiveness.
+  - Plotted confusion matrices and accuracy metrics to visualize model performance.
+
+- **Code Modularity & Best Practices:**
+  - Separated functionalities into dedicated modules for **forward propagation, backpropagation, optimizers, and configuration management**.
+  - Ensured **clean, well-structured code** following best software engineering practices.
+
+- **Reproducibility & Transparency:**
+  - Training and testing datasets were properly **split and randomized** to prevent data leakage.
+  - The code is **fully documented** and adheres to ethical ML practices (no data cheating).
+
+Overall, this assignment provides a strong foundation for **neural network training, evaluation, and optimization**.
+
+
+### Self Declaration 
+I, Amar Kumar, swear on my honour that I have written the code and the report by myself and have not copied it from the internet or other students.
