@@ -299,5 +299,3 @@ This assignment explored deep learning on the **Fashion-MNIST** dataset using a 
 Overall, this assignment provides a strong foundation for **neural network training, evaluation, and optimization**.
 
 
-### Self Declaration 
-I, Amar Kumar, swear on my honour that I have written the code and the report by myself and have not copied it from the internet or other students.
